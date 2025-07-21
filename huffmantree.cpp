@@ -1,7 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <vector>
 #include <string.h>
+#include <sdsl/bit_vectors.hpp>
+
 
 #define BYTE_SIZE 256
 
@@ -263,7 +266,36 @@ int encodeHuffman(string input, node* tree)
     return 1;
 }
 
+void serializeTree(node* root, sdsl::bit_vector& treeBits, vector<uint8_t>& leafSymbols)
+{
 
+    static unsigned pos = 0;
+
+    if(!root)
+    {
+        return;
+    }
+
+    if(pos >= treeBits.size())
+    {
+        throw runtime_error("Bitvector overflow!");
+    }
+
+    if (!root->left && !root->right)
+    {
+        treeBits[pos++] = 1;
+        leafSymbols.push_back(root->field.label);
+    }
+
+    else
+    {
+        treeBits[pos++] = 0;
+        serializeTree(root->left, treeBits, leafSymbols);
+        serializeTree(root->right, treeBits, leafSymbols);
+    
+    }
+
+}
 
 int main(void)
 {
@@ -277,7 +309,7 @@ cin >> input;
 cout << "[Console] Initializing...\n";
 
 int inputSize = input.size();
-bucketed processedInput[inputSize];
+bucketed* processedInput = new bucketed[inputSize];
 for(int i = 0; i < inputSize; i++)
 {
     processedInput[i].label = 0;
@@ -291,14 +323,21 @@ ll* list = buildList(procInput);
 
 node* tree = huffmanTree(list);
 
-if(encodeHuffman(input, tree))
-{
-    cout << "[Console] Succesfully generated Huffman coding of the input string.\n";
-}
-else
-{
-    cout << "[Console] Failed to generate Huffman coding of the input string.";
-}
+encodeHuffman(input, tree);
+cout << "[Console] Succesfully generated Huffman coding of the input string.\n";
+
+size_t numNodes = 2 * BYTE_SIZE - 1;
+sdsl::bit_vector treeBits(numNodes);
+std::vector<uint8_t> leafSymbols;
+
+serializeTree(tree, treeBits, leafSymbols);
+cout << "[Console] Succesfully serialized tree.\n";
+
+std::ofstream out("tree_data.bin", std::ios::binary);
+sdsl::serialize(treeBits, out);
+out.write(reinterpret_cast<char*>(leafSymbols.data()), leafSymbols.size());
+
+cout << "[Console] Succesfully written tree to memory.\n";
 auto end = chrono::high_resolution_clock::now();
 cout << "\n[Time elapsed: "
      << chrono::duration_cast<chrono::milliseconds>(end - start).count()
@@ -308,5 +347,5 @@ freeTree(tree);
 delete list->head;
 delete list;
 delete procInput;
-
+delete[] processedInput;
 }
