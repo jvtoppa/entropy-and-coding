@@ -9,5 +9,6 @@ You need to install [sdsl-lite](https://github.com/simongog/sdsl-lite) by Gog et
 ```bash
 git clone https://github.com/jvtoppa/entropy-and-coding.git
 cd entropy-and-coding
-g++ -std=c++11 -O3 -DNDEBUG -pg -I ~/include -L ~/lib huffmantree.cpp -o program -lsdsl -ldivsufsort -ldivsufsort64
+g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib huffmantree.cpp -o program -lsdsl -ldivsufsort -ldivsufsort64
+
 
