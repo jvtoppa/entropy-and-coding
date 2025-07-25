@@ -23,8 +23,8 @@ def command_rle(args):
 
     print("\n------------------------------------------------\n")
     print("Input file size:  ", round(os.path.getsize(args.input)/1000000, 2), "Mb")
-    print("Output file size: ",round(os.path.getsize(args.output)/1000000, 2), "Mb")
-    print("Compression rate: ", round(100 - 100*os.path.getsize(args.output)/(os.path.getsize(args.input)),2), "%")
+    print("Output file size: ",round(os.path.getsize(name_base)/1000000, 2), "Mb")
+    print("Compression rate: ", round(100 - 100*os.path.getsize(name_base)/(os.path.getsize(args.input)),2), "%")
     print("\n--------------------------------------\n")
     
 
@@ -34,9 +34,9 @@ def command_huffman(args):
 
     print("\n--------------------------------------\n")
     print("Input file size:  ",round(os.path.getsize(args.input)/1000000, 2), "Mb")
-    print("Output file size: ",round(os.path.getsize(args.output + "_encoding.bin")/1000000, 2), "Mb")
-    print("Tree file size:   ",os.path.getsize(args.output + "_tree_data.bin"), "b")
-    print("Compression rate: ", round(100 - 100*os.path.getsize(args.output + "_encoding.bin")/(os.path.getsize(args.input)),2), "%")
+    print("Output file size: ",round(os.path.getsize(name_base + "_encoding.bin")/1000000, 2), "Mb")
+    print("Tree file size:   ",os.path.getsize(name_base + "_tree_data.bin"), "b")
+    print("Compression rate: ", round(100 - 100*os.path.getsize(name_base + "_encoding.bin")/(os.path.getsize(args.input)),2), "%")
     print("\n--------------------------------------\n")
 
 def command_dehuffman(args):
@@ -54,10 +54,10 @@ def command_pipeline(args):
 
     print("\n--------------------------------------\n")
     print("Input file size:             ",round(os.path.getsize(args.input)/1000000, 2), "Mb")
-    print("RLE file size:               ", round(os.path.getsize(args.output)/1000000, 2), "Mb")
-    print("RLE->Huffman file size:      ",round(os.path.getsize(args.output + "_encoding.bin")/1000000, 2), "Mb")
-    print("Tree file size:              ",os.path.getsize(args.output + "_tree_data.bin"), "b")
-    print("Compression rate:            ", round(100 - 100*os.path.getsize(args.output + "_encoding.bin")/(os.path.getsize(args.input)),2), "%")
+    print("RLE file size:               ", round(os.path.getsize(name_base)/1000000, 2), "Mb")
+    print("RLE->Huffman file size:      ",round(os.path.getsize(name_base + "_encoding.bin")/1000000, 2), "Mb")
+    print("Tree file size:              ",os.path.getsize(name_base + "_tree_data.bin"), "b")
+    print("Compression rate:            ", round(100 - 100*os.path.getsize(name_base + "_encoding.bin")/(os.path.getsize(args.input)),2), "%")
     print("\n--------------------------------------\n")
     
 def main():
