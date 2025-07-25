@@ -5,7 +5,7 @@ Entropy-Huffman + RLE Compression Tool
 This project is based on Gonzalo Navarro's amazing "Compact Data Structures: A Practical Approach. 
 
 We aim to implements simple Huffman Coding and Run-Length Encoding (RLE)
-algorithms for data compression and decompressio by providing command-line
+algorithms for data compression and decompression by providing command-line
 tools for encoding, decoding, and combining both algorithms into a compression pipeline.
 
 
