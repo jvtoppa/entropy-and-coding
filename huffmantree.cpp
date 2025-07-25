@@ -1,4 +1,4 @@
-//This script regards an implements of the Huffman tree.
+//This script regards an implementation of the Huffman tree.
 //Better performance could be achieved with the building of the canonical Huffman tree. However, this
 //is currently not implemented. Maybe for a future project? Either way, feel free to contribute. It
 //should be a pretty simple process. Another possible improvement is maybe using the linked list from
