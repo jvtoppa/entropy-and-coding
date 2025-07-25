@@ -1,0 +1,101 @@
+#!/usr/bin/python
+
+import argparse
+import subprocess
+import os
+import tempfile
+
+def run_binary(binary, input_file, name_base=None):
+    with open(input_file, 'rb') as fin:
+        args = [binary]
+        if name_base:
+            args.append(name_base)
+        subprocess.run(args, stdin=fin)
+
+def run_binary_decompression(binary):
+    subprocess.run([binary])
+
+
+def command_rle(args):
+    name_base = args.output if args.output else os.path.splitext(os.path.basename(args.input))[0]
+    run_binary('./rle', args.input, name_base)
+
+
+    print("\n------------------------------------------------\n")
+    print("Input file size:  ", round(os.path.getsize(args.input)/1000000, 2), "Mb")
+    print("Output file size: ",round(os.path.getsize(args.output)/1000000, 2), "Mb")
+    print("Compression rate: ", round(100 - 100*os.path.getsize(args.output)/(os.path.getsize(args.input)),2), "%")
+    print("\n--------------------------------------\n")
+    
+
+def command_huffman(args):
+    name_base = args.output if args.output else os.path.splitext(os.path.basename(args.input))[0]
+    run_binary('./huffman', args.input, name_base)
+
+    print("\n--------------------------------------\n")
+    print("Input file size:  ",round(os.path.getsize(args.input)/1000000, 2), "Mb")
+    print("Output file size: ",round(os.path.getsize(args.output + "_encoding.bin")/1000000, 2), "Mb")
+    print("Tree file size:   ",os.path.getsize(args.output + "_tree_data.bin"), "b")
+    print("Compression rate: ", round(100 - 100*os.path.getsize(args.output + "_encoding.bin")/(os.path.getsize(args.input)),2), "%")
+    print("\n--------------------------------------\n")
+
+def command_dehuffman(args):
+    cmd = ['./dehuff', args.tree, args.encoded]
+    if args.output:
+        cmd.append(args.output)
+    subprocess.run(cmd)
+
+def command_pipeline(args):
+    name_base = args.output if args.output else os.path.splitext(os.path.basename(args.input))[0]
+
+    run_binary('./rle', args.input, name_base)
+
+    run_binary('./huffman', name_base, name_base)
+
+    print("\n--------------------------------------\n")
+    print("Input file size:             ",round(os.path.getsize(args.input)/1000000, 2), "Mb")
+    print("RLE file size:               ", round(os.path.getsize(args.output)/1000000, 2), "Mb")
+    print("RLE->Huffman file size:      ",round(os.path.getsize(args.output + "_encoding.bin")/1000000, 2), "Mb")
+    print("Tree file size:              ",os.path.getsize(args.output + "_tree_data.bin"), "b")
+    print("Compression rate:            ", round(100 - 100*os.path.getsize(args.output + "_encoding.bin")/(os.path.getsize(args.input)),2), "%")
+    print("\n--------------------------------------\n")
+    
+def main():
+    Description = """
+Huffman + RLE coding algorithms.
+
+
+    \nCompression:
+    \npython3 cli huffman/rle/pipeline --input [path/to/file]
+Creates compressed files encoding_rle.bin/encoding.bin/tree_data.bin.
+    """
+
+    parser = argparse.ArgumentParser(description=Description, formatter_class=argparse.RawTextHelpFormatter)
+    subparsers = parser.add_subparsers(dest='command', required=True)
+
+    rle_parser = subparsers.add_parser('rle', help='Run the RLE encoding algorithm')
+    rle_parser.add_argument('--input', required=True)
+    rle_parser.add_argument('--output', help='Base name for output files')
+    rle_parser.set_defaults(func=command_rle)
+
+    huff_parser = subparsers.add_parser('huffman', help='Run the Huffman Tree encoding algorithm')
+    huff_parser.add_argument('--input', required=True)
+    huff_parser.add_argument('--output', help='Base name for output files')
+    huff_parser.set_defaults(func=command_huffman)
+
+    pipe_parser = subparsers.add_parser('pipeline', help='Runs RLE->Huffman. For testing purposes.')
+    pipe_parser.add_argument('--input', required=True)
+    pipe_parser.add_argument('--output', help='Base name for output files')
+    pipe_parser.set_defaults(func=command_pipeline)
+
+    dehuff_parser = subparsers.add_parser('dehuffman', help='Decompress Huffman encoding (binaries must be in the ./encodings/ folder.)')
+    dehuff_parser.add_argument('--tree', required=True, help='Path to the serialized Huffman tree file.')
+    dehuff_parser.add_argument('--encoded', required=True, help='Path to the encoded bitstream file.')
+    dehuff_parser.add_argument('--output', help='Optional output path for the decompressed file (default: decompressed.txt)')
+    dehuff_parser.set_defaults(func=command_dehuffman)
+
+    args = parser.parse_args()
+    args.func(args)
+
+if __name__ == "__main__":
+    main()
