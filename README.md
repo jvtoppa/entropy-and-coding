@@ -10,7 +10,8 @@ tools for encoding, decoding, and combining both algorithms into a compression p
 
 
 
-Note: Requires g++ and the SDSL-lite library installed (https://github.com/simongog/sdsl-lite).
+Note: Requires g++ and the [sdsl-lite](https://github.com/simongog/sdsl-lite).
+
 Build
 -----
 
