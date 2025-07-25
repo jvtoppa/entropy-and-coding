@@ -1,5 +1,3 @@
-# Coding/Compression algorithms
-
 Entropy-Huffman + RLE Compression Tool
 ==============================
 This project is based on Gonzalo Navarro's amazing "Compact Data Structures: A Practical Approach. 
