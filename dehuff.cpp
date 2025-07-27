@@ -165,7 +165,7 @@ if(!writeToDiskText(decoded, outputFile))
 cout << "[Console] Done." << "\n";
 
 auto end = chrono::high_resolution_clock::now();
-cout << "\n[Huffman: Time elapsed: "
+cout << "\n[deHuffman: Time elapsed: "
      << chrono::duration_cast<chrono::milliseconds>(end - start).count()
      << " ms]\n\n";
 //decodeHuffman(stream, tree)
